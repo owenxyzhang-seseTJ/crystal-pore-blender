@@ -1,0 +1,4 @@
+interface:
+  display_name: "CIF 孔道与 Blender 剖面"
+  short_description: "从真实 CIF 生成单孔、客体和原子框架的透明侧视及可编辑剖面图"
+  default_prompt: "使用 $crystal-pore-blender，根据 CIF 计算孔道并在 Blender 中绘制保留客体的单孔侧视或纵向半剖图。"

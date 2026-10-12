@@ -1,0 +1,19 @@
+{
+  "palette": {"H":"#FFFFFF","C":"#90979E","N":"#537DCE","O":"#DF493C","S":"#EAC452","Fe":"#B98556","Zn":"#A7B0B9","Co":"#6486B2"},
+  "framework_radii_A": {"H":0.06,"C":0.115,"N":0.125,"O":0.13,"S":0.16,"Fe":0.20,"Zn":0.20,"Co":0.20},
+  "framework_bond_radius_A":0.033,
+  "guest_representation":"spacefill",
+  "guest_vdw_scale":0.55,
+  "guest_ball_radii_A":{"O":0.43,"H":0.235},
+  "guest_bond_radius_A":0.078,
+  "guest_palette":{"O":"#E23527","H":"#FFFFFF"},
+  "pore_outer":"#89C9D9",
+  "pore_inner":"#648EA8",
+  "pore_opacity":0.16,
+  "cutaway_opacity":0.28,
+  "camera_direction":[0,-1,0.23],
+  "camera_up":[0,0.23,1],
+  "resolution":[2000,1300],
+  "samples":128,
+  "section_outline":false
+}

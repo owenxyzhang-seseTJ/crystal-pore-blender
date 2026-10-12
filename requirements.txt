@@ -1,0 +1,5 @@
+numpy
+scipy
+pymatgen
+scikit-image>=0.25
+Pillow
