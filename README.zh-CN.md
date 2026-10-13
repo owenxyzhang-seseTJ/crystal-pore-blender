@@ -1,5 +1,9 @@
 # crystal-pore-blender
 
+[![PyPI](https://img.shields.io/pypi/v/crystal-pore-blender)](https://pypi.org/project/crystal-pore-blender/)
+[![Python](https://img.shields.io/pypi/pyversions/crystal-pore-blender)](https://pypi.org/project/crystal-pore-blender/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
 把 CIF 里的孔隙变成可编辑的 Blender 场景。
 
 看晶体里的原子不难，想把原子之间的空间画清楚就麻烦一些：孔壁要连续，剖面要能看见内部，客体还得留在正确的位置。这个工具先计算周期孔隙，再生成 Blender 场景。你可以直接出图，也可以打开 `.blend` 继续调整。
@@ -14,7 +18,14 @@
 
 ## 安装
 
-需要 Python 3.11 或更高版本。下载或克隆仓库后，在仓库目录运行：
+需要 Python 3.11 或更高版本。从 PyPI 安装：
+
+```sh
+python -m pip install crystal-pore-blender
+crystal-pore-blender doctor
+```
+
+在下载或克隆的仓库中从本地安装：
 
 ```sh
 python -m venv .venv
@@ -25,15 +36,15 @@ python -m pip install .
 crystal-pore-blender doctor
 ```
 
-生成 PNG 和 `.blend` 还需要 [Blender 4.2 或更高版本](https://www.blender.org/download/)。程序会查找 PATH，以及 macOS、Windows 的常见安装目录。没找到时，用 `--blender "程序路径"` 指定。
-
-也可以运行 `python -m pip install '.[render]'` 安装 `bpy`，直接通过 Python 渲染。它需要与你的 Python 版本、系统匹配的 wheel；找不到时，使用独立的 Blender 程序即可。
-
-项目还没有发布到 PyPI。除了在下载的仓库中 `pip install .`，也能直接安装 GitHub 版本：
+需要跟随 `main` 分支最新提交时，从 GitHub 安装：
 
 ```sh
 python -m pip install "git+https://github.com/owenxyzhang-seseTJ/crystal-pore-blender.git"
 ```
+
+生成 PNG 和 `.blend` 还需要 [Blender 4.2 或更高版本](https://www.blender.org/download/)。程序会查找 PATH，以及 macOS、Windows 的常见安装目录。没找到时，用 `--blender "程序路径"` 指定。
+
+也可以运行 `python -m pip install 'crystal-pore-blender[render]'` 安装 `bpy`，直接通过 Python 渲染。它需要与你的 Python 版本、系统匹配的 wheel；找不到时，使用独立的 Blender 程序即可。
 
 ## 先跑一张图
 

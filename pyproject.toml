@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=68"]
+requires = ["setuptools>=77"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -8,6 +8,22 @@ version = "0.2.0"
 description = "Periodic crystal pore surfaces and editable Blender scenes from CIF files"
 readme = "README.md"
 requires-python = ">=3.11"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [{ name = "Xiaoyu Zhang", email = "owenxyzhang@gmail.com" }]
+keywords = ["crystal", "CIF", "MOF", "porous-materials", "pore-surface", "Blender", "visualization", "materials-science"]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Intended Audience :: Science/Research",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Topic :: Scientific/Engineering :: Chemistry",
+  "Topic :: Scientific/Engineering :: Physics",
+  "Topic :: Scientific/Engineering :: Visualization",
+]
 dependencies = ["numpy>=1.26", "scipy>=1.11", "pymatgen>=2024.6", "scikit-image>=0.25", "Pillow>=10"]
 
 [project.optional-dependencies]
@@ -18,7 +34,10 @@ dev = ["pytest>=8", "ruff>=0.9", "build>=1"]
 crystal-pore-blender = "crystal_pore_blender.cli:main"
 
 [project.urls]
+Homepage = "https://github.com/owenxyzhang-seseTJ/crystal-pore-blender"
 Repository = "https://github.com/owenxyzhang-seseTJ/crystal-pore-blender"
+Issues = "https://github.com/owenxyzhang-seseTJ/crystal-pore-blender/issues"
+Changelog = "https://github.com/owenxyzhang-seseTJ/crystal-pore-blender/releases"
 
 [tool.setuptools.packages.find]
 include = ["crystal_pore_blender*"]

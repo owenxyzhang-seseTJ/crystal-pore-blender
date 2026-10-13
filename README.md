@@ -1,5 +1,9 @@
 # crystal-pore-blender
 
+[![PyPI](https://img.shields.io/pypi/v/crystal-pore-blender)](https://pypi.org/project/crystal-pore-blender/)
+[![Python](https://img.shields.io/pypi/pyversions/crystal-pore-blender)](https://pypi.org/project/crystal-pore-blender/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
 Turn a CIF file into a pore surface and an editable Blender scene.
 
 Crystal viewers are good at showing atoms. Showing the space between those atoms usually takes more work, especially when you need a cutaway or want to keep a guest molecule visible. This tool handles the periodic geometry first, then builds a Blender scene you can light, recolor, and edit.
@@ -14,7 +18,14 @@ A rendered synthetic example. The surface is calculated from the atomic model, n
 
 ## Install
 
-Use Python 3.11 or newer. From a downloaded or cloned copy of the repository:
+Use Python 3.11 or newer. Install from PyPI:
+
+```sh
+python -m pip install crystal-pore-blender
+crystal-pore-blender doctor
+```
+
+To work from a downloaded or cloned copy of the repository instead:
 
 ```sh
 python -m venv .venv
@@ -25,15 +36,15 @@ python -m pip install .
 crystal-pore-blender doctor
 ```
 
-For PNG images and `.blend` scenes, install [Blender 4.2 or newer](https://www.blender.org/download/). The command looks for Blender on PATH and in the usual macOS and Windows installation folders. You can also pass `--blender "/path/to/blender"`.
-
-If you prefer to run Blender as a Python module, `python -m pip install '.[render]'` installs the optional `bpy` dependency. Its wheels require a matching Python version and platform. If pip cannot find a wheel, use the standalone Blender application; the geometry package does not depend on `bpy`.
-
-There is no PyPI release of this tool yet. Use `pip install .` from the repository, or install directly from GitHub:
+To track the latest commit on `main`, install from GitHub:
 
 ```sh
 python -m pip install "git+https://github.com/owenxyzhang-seseTJ/crystal-pore-blender.git"
 ```
+
+For PNG images and `.blend` scenes, install [Blender 4.2 or newer](https://www.blender.org/download/). The command looks for Blender on PATH and in the usual macOS and Windows installation folders. You can also pass `--blender "/path/to/blender"`.
+
+If you prefer to run Blender as a Python module, `python -m pip install 'crystal-pore-blender[render]'` installs the optional `bpy` dependency. Its wheels require a matching Python version and platform. If pip cannot find a wheel, use the standalone Blender application; the geometry package does not depend on `bpy`.
 
 ## Try it
 
