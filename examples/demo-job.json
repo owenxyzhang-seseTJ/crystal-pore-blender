@@ -1,0 +1,12 @@
+{
+  "cif": "demo-channel.cif",
+  "radii_model": "pymatgen",
+  "probe_radius_A": 1.2,
+  "grid_step_A": 0.35,
+  "pore_axis_uvw": [1, 0, 0],
+  "display_mode": "single",
+  "framework_mode": "network",
+  "pore_anchor_fractional": [0.5, 0.5, 0.5],
+  "open_crop_axes": [0],
+  "crop_fractional": {"min": [0, 0.27, 0.27], "max": [1, 0.73, 0.73]}
+}

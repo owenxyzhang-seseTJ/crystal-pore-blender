@@ -1,0 +1,23 @@
+{
+  "palette": {},
+  "framework_radii_A": {},
+  "framework_radius_A": 0.14,
+  "framework_bond_radius_A": 0.045,
+  "guest_representation": "spacefill",
+  "guest_vdw_scale": 0.65,
+  "guest_ball_radius_A": 0.30,
+  "guest_bond_radius_A": 0.075,
+  "guest_palette": {},
+  "pore_outer": "#89C9D9",
+  "pore_inner": "#648EA8",
+  "pore_opacity": 0.20,
+  "cutaway_opacity": 0.32,
+  "camera_direction": [0, -1, 0.25],
+  "camera_up": [0, 0, 1],
+  "resolution": [1600, 1200],
+  "samples": 64,
+  "section_outline": false,
+  "show_framework": true,
+  "show_guests": true,
+  "show_pore": true
+}

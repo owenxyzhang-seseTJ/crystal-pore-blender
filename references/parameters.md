@@ -1,72 +1,73 @@
-# 参数与文件接口
+# 参数与输出
 
-## 入库和索引
+## 工作配置
 
-`inspect` 生成 `intake.json`：源 CIF、完整对称展开后的源索引、元素、标签、分数坐标及行存储晶格。分数坐标内部模 1，仅用于周期坐标；显示时对完整分子再展开。不得把 VESTA、Gemmi、pymatgen 或其他旧文件的整数索引直接互换。
+使用 `crystal-pore-blender init --cif input.cif --out job.json` 生成配置。`cif` 路径相对 job 文件，其余输出路径相对当前目录。源索引来自本次对称展开的 `job.intake.json`。
 
-`job.json` 的 `cif` 路径相对于 job 文件，其他本机可执行路径为实际定位的路径。计算脚本默认使用 pymatgen 的晶格方向；若要接现有 Blender，设置 `lattice_A` 为该场景的行存储矩阵，脚本检查与源晶格度量一致。
+| 字段 | 默认值 | 含义 |
+| --- | --- | --- |
+| `radii_model` | `pymatgen` | 元素表格 vdW 半径；`custom` 要求全部显式提供；`legacy` 为兼容旧数值模型的有限表 |
+| `vdw_radii_A` | `{}` | 有来源的半径补充或覆盖，Å |
+| `probe_radius_A` | `1.2` | 球形探针半径，Å |
+| `grid_step_A` | `0.25` | 晶格方向采样步长上限，Å；斜晶胞不等同笛卡尔正交网格 |
+| `surface` | `contact` | `contact` 或 `probe-center`；共用一次计算缓存 |
+| `accessibility` | `percolating` | 保留周期贯通分量；`all` 包含孤立几何空腔 |
+| `guest_groups` | `[]` | 完整客体的源索引列表，每组第一个原子为锚点；从计算中删除 |
+| `guest_images` | 每组零平移一次 | 显示的完整客体镜像；设 `[]` 隐藏所有移除客体 |
+| `display_mode` | `cell` | `cell` 显示裁剪中的全部孔；`single` 选一个锚点分量 |
+| `crop_fractional` | `[0,0,0]` 至 `[1,1,1]` | 分数坐标矩形裁剪，可跨晶胞；实际端点落在网格上 |
+| `pore_anchor_fractional` | 无 | 单孔模式无客体时的三维分数坐标锚点 |
+| `pore_axis_uvw` | 仅唯一一维孔族推断 | 直接晶格方向，不是晶面法向；侧视/端视/剖切需要 |
+| `open_crop_axes` | `[0]` | 单孔裁剪允许开口的网格轴编号；其它边界不能截到孔壁 |
+| `framework_mode` | `network` | 有限周期网络显示；`molecules` 补全有限分子片段 |
+| `node_elements` | `[]` | 配位节点元素；避免把配体内部金属误当节点 |
+| `donor_elements` | `["N","O"]` | 配位键供体元素 |
+| `coordination_cutoff_A` | `2.6` | 指定节点与供体的显示键阈值 |
+| `bond_cutoffs_A` | `{}` | 元素对显示键覆盖，如 `{"Si-O":1.9}`；否则共价半径和乘 1.15 |
+| `wall_extra_A` | `0.45` | 选邻近孔壁原子的额外距离 |
+| `smooth_display` | `true` | 保留开口的三轮 Taubin 显示平滑 |
+| `max_display_smoothing_A` | `0.15` | 显示顶点位移上限 |
+| `convergence_step_A` | 无 | 额外计算较粗网格并比较 Contact 体积分数 |
+| `convergence_tolerance` | `0.025` | 粗细 Contact 体积分数允许绝对差；需另核查孔网维度 |
+| `max_voxels` | `4000000` | 周期计算体素上限，不是精确内存限额 |
+| `max_display_voxels` | `8000000` | 展示裁剪体素上限 |
+| `max_display_atoms` | `30000` | 防止过大展示原子集合 |
+| `zeopp_executable` | 无 | 可选 Zeo++ 程序路径或 PATH 名称；写入匹配半径表后调用 |
 
-下面是已经确认客体索引后的配置形状。示例的索引、平移与范围来自本次 Zn 水合案例，新结构必须先重新检查。
+`guest_images` 的格式为 `[{"group":0,"shift":[1,0,0]}]`。`group` 引用当前 `guest_groups` 中的一组，`shift` 必须是三个整数。原子索引不能跨 CIF 使用；批量模板不接受客体索引。
 
-```json
-{
-  "cif": "input.cif",
-  "guest_groups": [[156,52,53],[157,54,55]],
-  "node_elements": ["Zn"],
-  "probe_radius_A": 0.9,
-  "grid_step_A": 0.14,
-  "convergence_step_A": 0.20,
-  "pore_axis_uvw": [1,0,0],
-  "open_crop_axes": [0],
-  "crop_fractional": {"min":[-0.15,0.01,-0.52],"max":[3.15,0.91,0.28]},
-  "guest_images": [
-    {"group":0,"shift":[0,0,-1]}, {"group":1,"shift":[0,0,0]},
-    {"group":0,"shift":[1,0,-1]}, {"group":1,"shift":[1,0,0]},
-    {"group":0,"shift":[2,0,-1]}, {"group":1,"shift":[2,0,0]}
-  ]
-}
+默认保留所有源原子参与计算。去客体时，保持源晶格不变；这是明确的几何模型，不代表框架弛豫后的实验相。未知 vdW 半径会报错，不自动猜值。
+
+## 命令分步执行
+
+```sh
+crystal-pore-blender inspect --cif input.cif --out intake
+crystal-pore-blender compute --job job.json --out calculation
+crystal-pore-blender display --job job.json --calculation calculation --out display
+crystal-pore-blender render --display display --out render
 ```
 
-`guest_groups` 内每组都是完整客体的源索引，第一个原子是孔道锚点，水应以 O 开头。这些组全部在孔道计算中移除；`guest_images` 指定仍需显示的完整客体周期镜像。非选定客体保持原样；若其它客体也应移除，显式列出。
+`run` 串联计算、显示、渲染和白底合成。`--no-render` 停在几何输出。`run` 不覆盖非空目录，除非使用 `--force`。分步命令允许重建各自目录；缓存失配会拒绝。
 
-脚本以锚点展开客体，适合尺寸小于晶胞半尺度的离散分子，如本次水。大的跨胞客体应先按实际分子键连通整体展开，并扩展脚本的数据输入，不可把离锚点最近的各原子镜像当成普遍正确的分子重建。
+`--probe`、`--step`、`--surface`、`--accessibility`、`--axis` 在 `run` 和 `batch` 中覆盖 job 的对应字段。`batch --cif a.cif b.cif` 按文件名建立子目录，重复文件名会报错；每项结果及错误记入 `batch.json`，有失败时返回非零退出码。
 
-`node_elements` 指框架配位节点；不要一概排除所有金属，因为 Fc 配体内部的 Fe–C 要保留为完整组分。`donor_elements` 默认 N/O，`coordination_cutoff_A` 默认 2.60；新材料依据实际配位验证后设置。其他键阈值通过 `bond_cutoffs_A` 提供，如 `{"C-P":1.95}`。
+## 风格与视角
 
-`vdw_radii_A` 提供额外元素或有来源的覆盖。改变它必须重新计算场，并使用相同半径模型核对原生孔网；它与 `style` 中显示球径是两套参数。
+复制 `crystal_pore_blender/styles/default.json` 后用 `--style` 加载。`palette` 覆盖元素颜色；未覆盖的常见非金属使用固定元素色，其余为中性灰。`framework_radii_A` 按元素覆盖显示半径，缺项用 `framework_radius_A`。这些都不影响计算半径。
 
-`max_voxels` 默认 12000000；若超限，选适当晶胞或分辨率，不忽略资源限制。`smooth_display` 默认 true，`max_display_smoothing_A` 默认 0.10（明确的失败上限，并非应达到的位移）。
+`guest_representation` 支持 `spacefill` 和 `ball-stick`；前者用数值 vdW 半径乘 `guest_vdw_scale` 作显示球径，后者用 `guest_ball_radii_A` 或 `guest_ball_radius_A`。`guest_palette` 单独覆盖客体颜色。
 
-`zeopp_executable` 可设置实际原生程序绝对路径。未设置时只完成周期网格方法，报告 `zeopp.ran=false`；不得声称已使用 Zeo++ 验证。需要独立原生验证时定位/安装合法可执行版本并设置此项。
+`pore_outer`、`pore_inner` 是表面正面与背面颜色；`pore_opacity`、`cutaway_opacity` 分别控制完整和剖面透明度。`show_framework`、`show_guests`、`show_pore` 控制整个集合，保存后的视口也使用相同可见状态。
 
-## 计算产物
+`--view free` 使用 `camera_direction`，`side` 投影到孔轴法平面并使孔轴横向，`end` 沿孔轴观察。`--mode cutaway --section longitudinal` 保留背向相机的半壳；`transverse` 以孔轴为法向。切面默认经过客体锚点均值或裁剪中心，可用风格中的 `section_origin_A` 指定笛卡尔原点。剖面不加盖、不裁原子。
 
-`compute` 保存：
+`resolution` 为 `[宽,高]`，`samples` 为 Cycles 采样数。渲染自动尝试可用 GPU，失败回到 CPU。Blender 图层关闭后，相机仅按可见几何拟合。`section_outline` 目前仅接受 false。
 
-- `intake.json`：与缓存对应的源结构。
-- `framework_for_pores.cif`：显式删除指定完整客体后的计算模型。
-- `periodic_probe_field.npz`：`contact_level_A`、`accessible_centers`、`lattice_A`、`probe_radius_A` 和计算框架坐标。
-- `calculation.json`：半径、组分、精度、winding、去客体索引、原生执行状态。
-- 启用原生程序时的 `zeopp.res`、`zeopp.chan`、`zeopp.log`。
+## 输出
 
-`display` 复用这些产物，核对源、晶格、客体选择及半径参数。只修改裁剪、客体周期镜像或显示平滑时不用重复算周期场。已有 legacy 场如缺 `intake.json`、`calculation.json`，只有当前源坐标、晶格、半径、去客体列表均经核对，才可补充对应元数据；不要跳过缓存匹配检查。
+- `calculation/`：源索引、去客体 CIF、周期中心/Contact 标量场、实际半径、体积分数、winding、维度、收敛和 Zeo++ 执行记录。
+- `display/`：原始/显示 OBJ、包含两套顶点的 NPZ、原子与客体 JSON、坐标及平滑位移核查。
+- `render/`：`figure.blend`、`figure_transparent.png`、`figure_white.png`、最终风格和保存后重开核查记录；剖面附剖切网格。
+- `job_used.json`、`run.json`：运行参数和各阶段完成状态。
 
-## 显示产物
-
-`display/display.json` 包含 framework atoms / bonds、完整 guests / bonds、统一晶格、已验证孔轴、探针及半径模型。`pore_mesh.npz` 有原始顶点 `raw_vertices_A`、显示顶点 `vertices_A`、`triangles`；另有原始/显示 OBJ 和 validation。
-
-有限配体选择按孔壁邻近关系补齐，其结果不承诺任何固定配体或原子数。无限共价网络会显式报错，需按相应周期网络的方法制备显示数据。不要把无限 COF 当作一个有限配体无限补齐。
-
-## 渲染设置
-
-风格文件可从 `assets/ttfp-approved-style.json` 复制修改：
-
-- `guest_representation` 为 `spacefill` 或 `ball-stick`；spacefill 使用计算半径表乘 `guest_vdw_scale` 作为显示半径，默认 0.55。ball-stick 使用 `guest_ball_radii_A`，显示原子间源几何键。
-- `palette`、`framework_radii_A` 必须包含实际元素，未知元素不随机着色。
-- `pore_outer` / `pore_inner` 分别用于外表面和背向面（从腔内看到的内侧）。
-- `pore_opacity` 控制完整图；`cutaway_opacity` 控制半剖。0.16 双层叠加近似 0.29 的单层不透明度；不是把孔道科学模型改成两个嵌套壳。
-- `section_outline=false` 为本次认可设置。当前 helper 不添加轮廓线。
-- `camera_direction`、`camera_up` 给侧视朝向倾向；脚本将方向投影到孔轴法平面，并使孔轴横向。沿孔端视或横向切片需要另写相机/裁切，不要套用纵向半剖。
-- `resolution` 和 `samples` 可为必要预览临时降低；最终本次为 2000×1300、128 samples。
-
-每次修改输出到新 render 目录。`figure.blend` 为主图设置，`figure_transparent.png` 为真实渲染；白底脚本输出 `figure_white.png`。`render_validation.json` 记录保存后重开校验与实际 CPU/GPU 后端，`style_used.json` 固化风格。无需渲染所有变体；只做用户请求的视角和确实有用的图层。
+计算文件记录本机源文件路径和用户自己的结构数据；自行分享输出时按实际需要选择文件。公开仓库不需要提交个人任务输出。

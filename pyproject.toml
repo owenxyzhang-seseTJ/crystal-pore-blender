@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "crystal-pore-blender"
+version = "0.2.0"
+description = "Periodic crystal pore surfaces and editable Blender scenes from CIF files"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = ["numpy>=1.26", "scipy>=1.11", "pymatgen>=2024.6", "scikit-image>=0.25", "Pillow>=10"]
+
+[project.optional-dependencies]
+render = ["bpy>=4.2"]
+dev = ["pytest>=8", "ruff>=0.9", "build>=1"]
+
+[project.scripts]
+crystal-pore-blender = "crystal_pore_blender.cli:main"
+
+[project.urls]
+Repository = "https://github.com/owenxyzhang-seseTJ/crystal-pore-blender"
+
+[tool.setuptools.packages.find]
+include = ["crystal_pore_blender*"]
+
+[tool.setuptools.package-data]
+crystal_pore_blender = ["styles/*.json"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
